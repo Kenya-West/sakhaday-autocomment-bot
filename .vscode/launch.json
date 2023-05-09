@@ -7,11 +7,11 @@
       "name": "Debug TypeScript in Node.js",
       "preLaunchTask": "npm: build",
       "program": "${workspaceFolder}/src/index.ts",
-      "protocol": "inspector",
       "outFiles": ["${workspaceFolder}/build/**/*.js"],
       "sourceMaps": true,
       "smartStep": true,
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": { "NODE_ENV": "development" }
     }
   ]
 }
