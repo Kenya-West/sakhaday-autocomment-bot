@@ -41,8 +41,10 @@ bot.command("status", (ctx) => {
 });
 
 bot.on("message", (ctx) => {
+  // Create random with chance 1/3
+  const random = Math.floor(Math.random() * 3) + 1;
   // eslint-disable-next-line eqeqeq
-  if (isWorking && ctx.message.sender_chat?.id == (process.env.TG_CHANNEL as unknown as number)) {
+  if (random === 1 && isWorking && ctx.message.sender_chat?.id == (process.env.TG_CHANNEL as unknown as number)) {
     void ctx.telegram.sendMessage(ctx.chat.id, `${process.env.TG_COMMENT_TEXT ?? "Lorem ipsum"}`, {
       reply_to_message_id: ctx.message.message_id
     });
