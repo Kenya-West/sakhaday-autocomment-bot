@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  web:
+    image: sakhadayautocommentbot_web
+    command: npm run start:production
+    ports:
+      - "3001:8082"
+    env_file:
+      - ./.env.production
