@@ -1,7 +1,7 @@
 {
-  "name": "typescript-starter",
+  "name": "sakhaday-autocomment-bot",
   "version": "1.0.0",
-  "description": "A basic typescript app starter for 2023.",
+  "description": "A bot to write a first comment in Teelgram channel (with native comments on)",
   "main": "index.js",
   "scripts": {
     "start:dev": "npx nodemon",
