@@ -4,7 +4,7 @@
   "description": "A bot to write a first comment in Teelgram channel (with native comments on)",
   "main": "index.js",
   "scripts": {
-    "start:local": "cross-env NODE_ENV=development npx nodemon",
+    "start:local": "cross-env NODE_ENV=development npx nodemon --inspect=src/index.ts",
     "start:tsnode:development": "cross-env NODE_ENV=development ts-node src/index.ts",
     "start:tsnode:production": "cross-env NODE_ENV=production ts-node src/index.ts",
     "start:development": "cross-env NODE_ENV=development npm run build && node build/index.js",
@@ -66,6 +66,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "jest-cucumber": "^3.0.1",
+    "node-cache": "^5.1.2",
     "telegraf": "^4.12.2"
   }
 }
