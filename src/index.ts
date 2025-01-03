@@ -4,6 +4,10 @@
 import * as dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
+const NodeCache = require("node-cache");
+
+const cache = new NodeCache({ stdTTL: 60 }); // Cache for 60 seconds (adjust as needed)
+
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 const port = process.env.PORT || 3000;
 const token = process.env.TG_TOKEN!;
@@ -41,12 +45,52 @@ bot.command("status", (ctx) => {
 });
 
 bot.on("message", (ctx) => {
-  // Create random with chance 1/3
-  const random = Math.floor(Math.random() * 3) + 1;
-  // eslint-disable-next-line eqeqeq
-  if (random === 1 && isWorking && ctx.message.sender_chat?.id == (process.env.TG_CHANNEL as unknown as number)) {
-    void ctx.telegram.sendMessage(ctx.chat.id, `${process.env.TG_COMMENT_TEXT ?? "Lorem ipsum"}`, {
-      reply_to_message_id: ctx.message.message_id
-    });
+  if (isAutomaticForwaredMessage(ctx)) {
+    // Create random with chance 1/3
+    const random = Math.floor(Math.random() * Number(process.env.RANDOM_SEED ?? 3)) + 1;
+    // eslint-disable-next-line eqeqeq
+    if (random === 1 && isWorking) {
+      // void ctx.telegram.sendMessage(ctx.chat.id, `${process.env.TG_COMMENT_TEXT ?? "Lorem ipsum"}`, {
+      //   reply_to_message_id: ctx.message.message_id
+      // });
+
+      // Check if it's part of a media group (album)
+      const message = ctx.message as any;
+
+      if (message.media_group_id) {
+        // Check if we've already replied to this media group
+        if (cache.has(message.media_group_id)) {
+          return; // Do nothing if already handled
+        }
+
+        // Store media_group_id to ensure only one reply
+        cache.set(message.media_group_id, true);
+
+        // Send a single reply for the album
+        replyToMessage(ctx, `${process.env.TG_COMMENT_TEXT ?? "Lorem ipsum"}`);
+      } else {
+        // Handle regular single messages
+        replyToMessage(ctx, `${process.env.TG_COMMENT_TEXT ?? "Lorem ipsum"}`);
+      }
+    }
   }
 });
+
+function isAutomaticForwaredMessage(ctx: any): boolean {
+  return (
+    // eslint-disable-next-line prettier/prettier, eqeqeq
+    ctx.message.forward_from_chat?.id == channelId &&
+    // eslint-disable-next-line eqeqeq
+    ctx.message.sender_chat?.id == channelId &&
+    ctx.message.is_automatic_forward === true
+  );
+}
+
+function replyToMessage(ctx: any, text: string): void {
+  void ctx.replyWithMarkdownV2(text, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    reply_to_message_id: ctx.message.message_id,
+    parse_mode: "MarkdownV2",
+    disable_web_page_preview: true
+  });
+}
