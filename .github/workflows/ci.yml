@@ -34,5 +34,5 @@ jobs:
             cd ${{ secrets.PROJECT_DIRNAME }}
             docker-compose down ${{ secrets.PROJECT_DOCKERCONTAINERNAME }}
             rm -f .env
-            echo "${{ secrets.ENV_CONTENT  }}" | base64 --decode > .env
+            printf "%s" "${{ secrets.ENV_CONTENT }}" | base64 --decode > .env
             docker compose up ${{ secrets.PROJECT_DOCKERCONTAINERNAME }} -d --build
